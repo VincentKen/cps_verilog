@@ -1,0 +1,48 @@
+GenTBVerilog:                  Verilog Testbench Generator
+GenTBVerilog:               Version: 8.1.0 Released on 17 Oct 2022
+GenTBVerilog:          Support info: help@edautils.com
+GenTBVerilog:      
+GenTBVerilog:      Copyright (c) 2012-2022 EDAUtils LLP
+GenTBVerilog:      All rights reserved.
+GenTBVerilog:       
+GenTBVerilog:           
+GenTBVerilog:      IN NO EVENT SHALL EDAUtils BE LIABLE TO ANY PARTY FOR 
+GenTBVerilog:      DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+GenTBVerilog:      DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE 
+GenTBVerilog:      OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF 
+GenTBVerilog:      EDAUtils HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH 
+GenTBVerilog:      DAMAGE. EDAUtils SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+GenTBVerilog:      INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+GenTBVerilog:      MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+GenTBVerilog:      SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND 
+GenTBVerilog:      EDAUtils HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE,
+GenTBVerilog:      SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+GenTBVerilog:      USER SHALL NOT, DIRECTLY, INDIRECTLY, ALONE, OR WITH
+GenTBVerilog:      ANOTHER PARTY, (i) COPY, DISASSEMBLE, REVERSE ENGINEER, OR
+GenTBVerilog:      DECOMPILE THE TOOL(S) (ii) MODIFY, CREATE DERIVATIVE TOOLS BASED
+GenTBVerilog:      UPON, OR TRANSLATE THE TOOL(S) (iii) LICENSE, SELL, RENT, LEASE,
+GenTBVerilog:      TRANSFER, GRANT ANY RIGHTS IN OR OTHERWISE COMMERCIALLY 
+GenTBVerilog:      EXPLOIT THE TOOL(S) IN ANY FORM TO ANY OTHER PARTY, NOR SHALL
+GenTBVerilog:      USER ATTEMPT TO DO ANY OF THE FOREGOING OR CAUSE OR PERMIT
+GenTBVerilog:      ANY THIRD PARTY TO DO OR ATTEMPT TO DO ANY OF THE FOREGOING,
+GenTBVerilog:      EXCEPT AS EXPRESSLY PERMITTED HEREUNDER. YOU ACKNOWLEDGE
+GenTBVerilog:      AND AGREE THAT EDAUtils SHALL OWN ALL RIGHT, TITLE AND INTEREST
+GenTBVerilog:      IN AND TO ALL INTELLECTUAL PROPERTY RIGHTS (INCLUDING
+GenTBVerilog:      ALL DERIVATIVES OR IMPROVEMENTS THEREOF) IN THE TOOL(S) AND
+GenTBVerilog:      ANY SUGGESTIONS, ENHANCEMENT REQUESTS, FEEDBACK,
+GenTBVerilog:      RECOMMENDATIONS OR OTHER INFORMATION PROVIDED BY USERS
+GenTBVerilog:      RELATING TO THE TOOL(S).
+GenTBVerilog:             
+GenTBVerilog: Note: 51501: Running with option:  -in reset_waveforms.v -top reset_waveforms -out tb.v -clk clk1@8{in1:in2} -clk clk2 -rst rst1 -rst rst2{1@5:0@50:1@150} 
+GenTBVerilog: Note: 51540: Parsing input file : C:/Users/Vincent/tools/vlogtbgen/examples/multiple_clk_rst/reset_waveforms.v
+GenTBVerilog: Note: 51541: Completed parsing input file : C:/Users/Vincent/tools/vlogtbgen/examples/multiple_clk_rst/reset_waveforms.v
+GenTBVerilog: Note: 51500: Populating datamodel from parsetree for file : C:\Users\Vincent\tools\vlogtbgen\examples\multiple_clk_rst\reset_waveforms.v
+GenTBVerilog: Note: 51501: Completed populating datamodel from parsetree for file : C:\Users\Vincent\tools\vlogtbgen\examples\multiple_clk_rst\reset_waveforms.v
+GenTBVerilog: Note: 51604: Completed  parsing ...
+GenTBVerilog: Note: 51919: Writing testbench file tb.v ...
+GenTBVerilog: Note: 51920: Completed testbench ... 
+GenTBVerilog: Note: 51921: Found 0 error(s) and 0 warning(s) ...
+GenTBVerilog: Note: 51922: Thank you for using this utility
+GenTBVerilog: Note: 51923: Send your suggestion/feedback to help@edautils.com
+GenTBVerilog: Note: 51924: Exiting ...
+

@@ -1,0 +1,5 @@
+pyperclip
+pyautogui
+PIL
+pyscreenshot
+hdlparse

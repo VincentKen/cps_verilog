@@ -1,0 +1,39 @@
+#!/bin/sh
+
+################################################################################
+##
+##    This program is distributed in the hope that it will be useful,
+##    but WITHOUT ANY WARRANTY; without even the implied warranty of
+##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+##
+##    Contact help@edautils.com you need more informattion/support
+################################################################################
+
+
+if test "1" = "1" ; then
+if (env | grep EDAUTILS_ROOT > /dev/null) ; then
+    no=op ;
+else
+    echo "Environment variable EDAUTILS_ROOT is not set. Set it to the installation directory." ;
+    echo "Example: setenv EDAUTILS_ROOT /user/foo/dir1/MiscEdaUtils" ;
+    exit 1 ;
+fi
+if (env | grep JAVA_FLAGS > /dev/null) ; then
+    no=op ;
+else
+    JAVA_FLAGS=" "
+fi
+fi
+
+JAVA="java -Duser.language=en -Duser.country=US -Duser.variant=US"
+
+CLASSPATH=${EDAUTILS_ROOT}/lib/testbenchgenerators.jar
+export CLASSPATH
+
+MAIN=com.eu.miscedautils.gentbvlog.GenTBVlog
+
+export EDAUTILS_ROOT
+
+exec ${JAVA} ${JAVA_FLAGS} ${MAIN}  ${1+"$@"} 
+
+

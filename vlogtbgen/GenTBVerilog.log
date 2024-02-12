@@ -1,0 +1,34 @@
+GenTBVerilog: Usage: -in <input vlog file name> 
+GenTBVerilog:        -top <dut name> , top module whose testbench needs to be crreated
+GenTBVerilog:        -out <testbench file name> 
+GenTBVerilog:        -flatten_ports, mandatory swicth if the specified top module contains multidimensional arrays, otherwise this switch is not required
+GenTBVerilog:          -in <input verilog file> , input verilog file
+GenTBVerilog:          [-f <file-containing-list-of-vlog-files>] 
+GenTBVerilog:          [-excludefilelist <File containing files to be excluded>] 
+GenTBVerilog:          [-v95] , disables System Verilog keyword
+GenTBVerilog:          [-nowildcard] , disables wildcard processing in the input file name(s)
+GenTBVerilog:          [+incdir+<include-path1>+<include-path2>] , search paths for the files included in the input verilog source
+GenTBVerilog:          [+define+directive1+directive2=somevalue+dir3=43] , defines macros
+GenTBVerilog:          [-declare_wires_for_undefined_obects] , declare wires for undefined the objects while populating verilog datamodel 
+GenTBVerilog:          [-nokeywords byte:shortint] , List of colon separated names not-to-be treated as keyword
+GenTBVerilog:          [-dump] , switch to enable save module/package into persistent disk data
+GenTBVerilog:          [-restore <name>], switch to specify the colon(:) separated list of design unit(s) to be loaded from the prcompiled database
+GenTBVerilog:          [-work <worklib>] , logical library where the module(s)/package(s) file to be saved; effective when is -dump is used
+GenTBVerilog:          [-mapfile mapfile.ini] , logical t physical library mappings where each line is contains logicallibname=physicalpath; effective when is -dump is used
+GenTBVerilog:          [-nobanner] , do not print the banner i.e. copyright information in the log messages 
+GenTBVerilog:          [-dbg] , parses files in the debug mode
+GenTBVerilog:          [-blackbox] , creates blackboxes for undefined modules
+GenTBVerilog:          [-quiet ] , do not print log messages
+GenTBVerilog:          [-suppress msgnum1:msgnum2:msgnum3] , suppresses messages with the given message numbers
+GenTBVerilog:          [-encryption_key <password with 16 characters>] 
+GenTBVerilog:          [-private_key_file <Binary file containig private key required for encryption] 
+GenTBVerilog:          [-public_key_file <Binary file containig private key required for decryption] 
+GenTBVerilog:          [-encryption_algorithm <algorithm name e.g. AES, RSA etc>]
+GenTBVerilog:        [-clk "clkName@clockPeriod{inputPort1:inputPort2}" -clk "clk1@10{address:data}" ] 
+GenTBVerilog:               Where the 'clk1' is the name of the clock, '10' is the clock half period and 'address' and 'data' are the input ports with which this clock 'clk1' is associated.
+GenTBVerilog:        [-rst "reset1{value1@delay1:value2@delay2}" -rst "rst2{1@5:0@50:1@50}" ]
+GenTBVerilog:               Where 'rst2' is the reset name, 1@5 tells to assign 1 at #5, 0#50 tells to set value of 'rst2' to 0 after delay of 50 and so on ...
+GenTBVerilog:        [-max_sim_cycles "clk1@250"] 
+GenTBVerilog:               Where 'clk1' is the clock name and 250 is the number of cycles of this clock after which simulation needs to be stopped ...
+GenTBVerilog:        [-max_sim_time 400] 
+GenTBVerilog:               Where 400 is the simulation time in 'ns' after which simulation needs to be stopped ...
