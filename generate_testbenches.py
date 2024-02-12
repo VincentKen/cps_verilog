@@ -48,7 +48,7 @@ def try_gentbvlog(inputfile, top, outputfile, clks, rsts):
 
 def try_testbench_generator(inputfile):
     try:
-        subprocess.run(["python3", "testbench-generator", "-f", inputfile], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["python3", "testbench_generator.py", "-f", inputfile], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         # check if testbench file was created
         if not os.path.exists(os.path.join(os.path.dirname(inputfile), "{}_tb.v".format(os.path.splitext(os.path.basename(inputfile))[0]))):
             # write error to error.txt
