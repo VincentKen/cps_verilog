@@ -1,6 +1,7 @@
 torch 
 torchvision
 transformers
+tokenizers
 datasets
 setuptools
 https://github.com/hdl/pyhdlparser/tarball/master
