@@ -2,4 +2,5 @@ torch
 torchvision
 transformers
 datasets
-hdlparse
+setuptools
+https://github.com/hdl/pyhdlparser/tarball/master
