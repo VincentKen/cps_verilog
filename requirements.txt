@@ -1,5 +1,5 @@
-pyperclip
-pyautogui
-PIL
-pyscreenshot
+torch 
+torchvision
+transformers
+datasets
 hdlparse
