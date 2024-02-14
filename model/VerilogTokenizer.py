@@ -56,6 +56,9 @@ def get_tokenizer(train=False):
         return None
 
 
+VerilogTokenizer = None
+
+
 if __name__ == "__main__":
     # check arguments for training requirement
     if len(sys.argv) > 1 and sys.argv[1] == "train":
@@ -66,3 +69,5 @@ if __name__ == "__main__":
     print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").ids)
     print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").attention_mask)
     print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").offsets)
+else:
+    VerilogTokenizer = get_tokenizer(train=True)
