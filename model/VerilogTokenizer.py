@@ -52,7 +52,7 @@ def get_tokenizer(train=False):
         return Tokenizer.from_file(TOKENIZER)
     except:
         print("Tokenizer not found")
-        print("Tokenizer might require training (get_tokenizer(traint=True))")
+        print("Tokenizer might require training (get_tokenizer(train=True))")
         return None
 
 
