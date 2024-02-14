@@ -2,9 +2,14 @@ import json
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.trainers import BpeTrainer
+from tokenizers.pre_tokenizers import Whitespace
 import os
+import sys
 
 DATASET = "../dataset"
+DATASET = os.path.join(os.path.dirname(__file__), DATASET)
+TOKENIZER = "verilog_tokenizer.json"
+TOKENIZER = os.path.join(os.path.dirname(__file__), TOKENIZER)
 
 VERILOG_KEYWORDS = [
     "always", "and", "assign", "automatic", "begin", "buf", "bufif0", "bufif1", "case", "casex",
@@ -34,15 +39,30 @@ def generate_training_data_file_list(path=DATASET):
 
 def train_tokenizer():
     verilog_tokenizer = Tokenizer(BPE(unk_token="[UNK]"))
+    verilog_tokenizer.pre_tokenizer = Whitespace()
     trainer = BpeTrainer(special_tokens=["[UNK]", "[CLS]", "[SEP]", "[MASK]"] + VERILOG_KEYWORDS)
     verilog_tokenizer.train(generate_training_data_file_list(), trainer)
-    verilog_tokenizer.save("verilog_tokenizer.json")
+    verilog_tokenizer.save(TOKENIZER)
 
-def get_tokenizer():
-    try:
-        return Tokenizer.from_file("verilog_tokenizer.json")
-    except:
+
+def get_tokenizer(train=False):
+    if train:
         train_tokenizer()
-        return Tokenizer.from_file("verilog_tokenizer.json")
+    try:
+        return Tokenizer.from_file(TOKENIZER)
+    except:
+        print("Tokenizer not found")
+        print("Tokenizer might require training (get_tokenizer(traint=True))")
+        return None
 
-verilog_tokenizer = get_tokenizer()
+
+if __name__ == "__main__":
+    # check arguments for training requirement
+    if len(sys.argv) > 1 and sys.argv[1] == "train":
+        verilog_tokenizer = get_tokenizer(train=True)
+    else:
+        verilog_tokenizer = get_tokenizer()
+    print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").tokens)
+    print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").ids)
+    print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").attention_mask)
+    print(verilog_tokenizer.encode("module test(input wire a, output wire b); endmodule").offsets)
