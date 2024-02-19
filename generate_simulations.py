@@ -32,14 +32,23 @@ def setup_and_run_simulation(input):
     try:
         subprocess.run(["xvlog"] + verilog_files, shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=directory)
     except subprocess.CalledProcessError as e:
+        with open(os.path.join(directory, "compile_error.txt"), "w") as f:
+            f.write("Error running xvlog")
+            f.write("Used arguments: {}".format(["xvlog"] + verilog_files))
         return 0
     try:
         subprocess.run(["xelab", "-debug", "typical", "-top", "testbench", "-snapshot", "snapshot"], shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=directory)
     except subprocess.CalledProcessError as e:
+        with open(os.path.join(directory, "compile_error.txt"), "w") as f:
+            f.write("Error running xelab")
+            f.write("Used arguments: {}".format(["xelab", "-debug", "typical", "-top", "testbench", "-snapshot", "snapshot"]))
         return 0
     try:
         subprocess.run(["xsim", "snapshot", "-tclbatch", "xsim_cfg.tcl"], shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=directory)
     except:
+        with open(os.path.join(directory, "compile_error.txt"), "w") as f:
+            f.write("Error running xsim")
+            f.write("Used arguments: {}".format(["xsim", "snapshot", "-tclbatch", "xsim_cfg.tcl"]))
         return 0
     return 1
 
@@ -56,13 +65,13 @@ def setup_and_run_simulations():
     for folder in os.listdir(DATASET_DIR):
         folder_count += 1
         # skip if folder does not contains a file ending with tb.v
-        if not any(filename.endswith("tb.v") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
+        if not any(filename.endswith("tb.v") for filename in os.listdir(os.path.join(DATASET_DIR, folder))) or any(filename.endswith("error.txt") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
             # print("skipping {}".format(folder))
             continue
         file = ""
-        # get verilog file with same name as folder
+        
         for filename in os.listdir(os.path.join(DATASET_DIR, folder)):
-            if filename.endswith(".v") and filename.startswith(folder) and not filename.endswith("tb.v"):
+            if filename.endswith(".v") and not filename.endswith("tb.v"):
                 file = filename
                 break
         create_sim_file_tasks.append((os.path.join(DATASET_DIR, folder), file))

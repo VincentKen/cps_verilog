@@ -33,18 +33,19 @@ def try_gentbvlog(inputfile, top, outputfile, clks, rsts):
         subprocess.run(subprocess_args, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except:
         # write error to error.txt
-        with open(os.path.join(os.path.dirname(inputfile), "error0.txt"), "w") as f:
+        with open(os.path.join(os.path.dirname(inputfile), "gentbvlog_error.txt"), "w") as f:
             f.write("Error creating testbench file using gentbvlog")
             f.write("Used arguments: {}".format(subprocess_args))
         return False
     # check if testbench file was created
     if not os.path.exists(outputfile):
         # write error to error.txt
-        with open(os.path.join(os.path.dirname(inputfile), "error0.txt"), "w") as f:
+        with open(os.path.join(os.path.dirname(inputfile), "gentbvlog_error.txt"), "w") as f:
             f.write("Error creating testbench file using gentbvlog")
             f.write("Used arguments: {}".format(subprocess_args))
         return False
     return True
+
 
 def try_testbench_generator(inputfile):
     try:
@@ -52,12 +53,12 @@ def try_testbench_generator(inputfile):
         # check if testbench file was created
         if not os.path.exists(os.path.join(os.path.dirname(inputfile), "{}_tb.v".format(os.path.splitext(os.path.basename(inputfile))[0]))):
             # write error to error.txt
-            with open(os.path.join(os.path.dirname(inputfile), "error1.txt"), "w") as f:
+            with open(os.path.join(os.path.dirname(inputfile), "testbench_generator_error.txt"), "w") as f:
                 f.write("Error creating testbench file using testbench-generator")
                 f.write("Used arguments: {}".format(["python3", "testbench-generator", "-f", inputfile]))
             return False
     except:
-        with open(os.path.join(os.path.dirname(inputfile), "error1.txt"), "w") as f:
+        with open(os.path.join(os.path.dirname(inputfile), "testbench_generator_error.txt"), "w") as f:
             f.write("Error creating testbench file using testbench-generator")
             f.write("Used arguments: {}".format(["python3", "testbench-generator", "-f", inputfile]))
         return False
@@ -70,12 +71,12 @@ def try_tbgen(inputfile):
         # check if testbench file was created
         if not os.path.exists(os.path.join(os.path.dirname(inputfile), "{}_tb.v".format(os.path.splitext(os.path.basename(inputfile))[0]))):
             # write error to error.txt
-            with open(os.path.join(os.path.dirname(inputfile), "error2.txt"), "w") as f:
+            with open(os.path.join(os.path.dirname(inputfile), "tbgen_error.txt"), "w") as f:
                 f.write("Error creating testbench file using tbgen")
                 f.write("Used arguments: {}".format(["python3", "tbgen", inputfile, os.path.join(os.path.dirnmae(inputfile), "{}_tb.v".format(os.path.splitext(os.path.basename(inputfile))[0]))]))
             return False
     except:
-        with open(os.path.join(os.path.dirname(inputfile), "error2.txt"), "w") as f:
+        with open(os.path.join(os.path.dirname(inputfile), "tbgen_error.txt"), "w") as f:
             f.write("Error creating testbench file using tbgen")
             f.write("Used arguments: {}".format(["python3", "tbgen", inputfile, os.path.join(os.path.dirnmae(inputfile), "{}_tb.v".format(os.path.splitext(os.path.basename(inputfile))[0]))]))
         return False
@@ -127,8 +128,8 @@ def create_testbench(arg):
             port_names = input_port_names + output_port_names
 
             succ = try_gentbvlog(os.path.join(directory, filename), mod_name, os.path.join(directory, "{}_tb.v".format(os.path.splitext(filename)[0])), clock_names, reset_names)
-            if not succ:
-                succ = try_tbgen(os.path.join(directory, filename))
+            # if not succ:
+            #     succ = try_tbgen(os.path.join(directory, filename))
             if not succ:
                 succ = try_testbench_generator(os.path.join(directory, filename))
             if not succ:
@@ -157,7 +158,9 @@ def create_testbenches():
     process_pool = Pool(processes=os.cpu_count()-6)
     # can_start = False
     tasks = [] # list of tuples containing (directory, filename)
+    total_tasks = 0
     total_folders = len(os.listdir(DATASET_DIR))
+
     # loop through folders in DATASET
     for folder in os.listdir(DATASET_DIR):
         # skip if folder contnains a file ending with tb.v or error.txt

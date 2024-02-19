@@ -6,6 +6,7 @@ import multiprocessing
 from datasets import load_dataset
 from multiprocessing import Pool
 import hdlparse.verilog_parser as vlog
+import concurrent.futures
 
 DATASET_DIR = "dataset"
 
@@ -21,12 +22,14 @@ def callback(result):
     success += result
 
 
-def create_dataset_folder(args):
-    module_name, module_content = args
+def create_dataset_folder(id, module_name, content):
     try:
-        os.mkdir(os.path.join(DATASET_DIR, module_name))
-        with open(os.path.join(DATASET_DIR, module_name, "{}.v".format(module_name)), "w", encoding="utf-8") as f:
-            f.write(module_content)
+        if os.path.exists(os.path.join(DATASET_DIR, "ds_{}".format(id))):
+            os.rmdir(os.path.join(DATASET_DIR, "ds_{}".format(id)))
+
+        os.mkdir(os.path.join(DATASET_DIR, "ds_{}".format(id)))
+        with open(os.path.join(DATASET_DIR, "ds_{}".format(id), "{}.v".format(module_name)), "w", encoding="utf-8") as f:
+            f.write(content)
         return 1
     except:
         return 0
@@ -39,8 +42,8 @@ def create_dataset():
     global completed
     global success
     ds = load_dataset("wangxinze/Verilog_data")
-    tasks = []
-    pool = Pool(processes=os.cpu_count()-2)
+    futures = []
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=8)
     extractor = vlog.VerilogExtractor()
     counter = 0
     total = len(ds['train'])
@@ -50,30 +53,16 @@ def create_dataset():
         # check if module folder already exists
         for m in verilog_modules:
             module_name = m.name
-            if os.path.exists(os.path.join(DATASET_DIR, module_name)):
-                continue
-
-            try:
-                os.mkdir(os.path.join(DATASET_DIR, module_name))
-                # create verilog file with module name
-                with open(os.path.join(DATASET_DIR, module_name, "{}.v".format(module_name)), "w", encoding="utf-8") as f:
-                    f.write(data['module_content'])
-            except:
-                print("Error creating folder or writing verilog file")
+            futures.append(executor.submit(create_dataset_folder, counter, module_name, data['module_content']))
         counter += 1
         if counter % 1000 == 0:
             print("Processed {} of {} modules".format(counter, total))
-    # for task in tasks:
-    #     pool.apply_async(create_dataset_folder, args=(task,), callback=callback)
-    # while len(tasks) > completed:
-    #     print("Tasks {} completed out of {}".format(completed, len(tasks)))
-    #     time.sleep(20)
-    # pool.close()
-    # pool.join()
-    # try:
-    #     print("Number of successful dataset creations: {}".format(success))
-    # except:
-    #     pass
+    for future in futures:
+        success += future.result()
+        completed += 1
+
+    print("Completed {} of {} total modules".format(completed, total))
+    print("Success: {}".format(success))
 
 if __name__ == "__main__":
     create_dataset()
