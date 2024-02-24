@@ -24,9 +24,9 @@ def callback(result):
 
 def create_dataset_folder(id, module_name, content):
     try:
+        # delete folder if it already exists
         if os.path.exists(os.path.join(DATASET_DIR, "ds_{}".format(id))):
             os.rmdir(os.path.join(DATASET_DIR, "ds_{}".format(id)))
-
         os.mkdir(os.path.join(DATASET_DIR, "ds_{}".format(id)))
         with open(os.path.join(DATASET_DIR, "ds_{}".format(id), "{}.v".format(module_name)), "w", encoding="utf-8") as f:
             f.write(content)
@@ -58,11 +58,6 @@ def create_dataset():
         if counter % 1000 == 0:
             print("Processed {} of {} modules".format(counter, total))
     for future in futures:
-        success += future.result()
-        completed += 1
-
-    print("Completed {} of {} total modules".format(completed, total))
-    print("Success: {}".format(success))
-
+        future.result()
 if __name__ == "__main__":
     create_dataset()

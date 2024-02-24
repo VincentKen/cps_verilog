@@ -5,7 +5,7 @@ import re
 
 import threading
 import multiprocessing
-from vcd2json import WaveExtractor
+
 import json
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool
