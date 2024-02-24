@@ -16,7 +16,7 @@ def callback(result):
 
 def setup_and_run_simulation(input):
     directory, file = input
-    tcl_file_contents = "log_wave -recursive *\nopen_vcd\nlog_vcd [get_object /testbench/inst*]\nrun all\nclose_vcd\nexit"
+    tcl_file_contents = "log_wave [get_objects -r -filter {type == signal || type == in_port || type == out_port || type == inout_port || type == port} /testbench/inst/*]\nopen_vcd\nlog_vcd [get_object -r -filter {type == signal || type == in_port || type == out_port || type == inout_port || type == port} /testbench/inst/*]\nrun all\nclose_vcd\nexit"
     # create tcl file called xsim_cfg.tcl if it doesn't exist
     try:
         with open(os.path.join(directory, "xsim_cfg.tcl"), "w") as f:
@@ -32,23 +32,20 @@ def setup_and_run_simulation(input):
     try:
         subprocess.run(["xvlog"] + verilog_files, shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=directory)
     except subprocess.CalledProcessError as e:
-        with open(os.path.join(directory, "compile_error.txt"), "w") as f:
-            f.write("Error running xvlog")
-            f.write("Used arguments: {}".format(["xvlog"] + verilog_files))
+        with open(os.path.join(os.path.dirname(file), "compile_error.txt"), "w") as f:
+            f.write("Error compiling verilog files using xvlog")
         return 0
     try:
         subprocess.run(["xelab", "-debug", "typical", "-top", "testbench", "-snapshot", "snapshot"], shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=directory)
     except subprocess.CalledProcessError as e:
-        with open(os.path.join(directory, "compile_error.txt"), "w") as f:
-            f.write("Error running xelab")
-            f.write("Used arguments: {}".format(["xelab", "-debug", "typical", "-top", "testbench", "-snapshot", "snapshot"]))
+        with open(os.path.join(os.path.dirname(file), "compile_error.txt"), "w") as f:
+            f.write("Error compiling verilog files using xelab")
         return 0
     try:
         subprocess.run(["xsim", "snapshot", "-tclbatch", "xsim_cfg.tcl"], shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=directory)
     except:
-        with open(os.path.join(directory, "compile_error.txt"), "w") as f:
-            f.write("Error running xsim")
-            f.write("Used arguments: {}".format(["xsim", "snapshot", "-tclbatch", "xsim_cfg.tcl"]))
+        with open(os.path.join(os.path.dirname(file), "compile_error.txt"), "w") as f:
+            f.write("Error compiling verilog files using xsim")
         return 0
     return 1
 
@@ -64,12 +61,14 @@ def setup_and_run_simulations():
     # loop through folders in DATASET
     for folder in os.listdir(DATASET_DIR):
         folder_count += 1
-        # skip if folder does not contains a file ending with tb.v
+        # skip if folder does not contains a file ending with tb.v, without it we can't run simulation
         if not any(filename.endswith("tb.v") for filename in os.listdir(os.path.join(DATASET_DIR, folder))) or any(filename.endswith("error.txt") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
-            # print("skipping {}".format(folder))
+            continue
+        # skip if folder contains dump.vcd. This means simulation has already been performed on this folder
+        if any(filename.endswith("dump.vcd") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
             continue
         file = ""
-        
+        # read the verilog file in the folder
         for filename in os.listdir(os.path.join(DATASET_DIR, folder)):
             if filename.endswith(".v") and not filename.endswith("tb.v"):
                 file = filename
