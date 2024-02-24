@@ -26,24 +26,44 @@ def callback(result):
         
 def setup_and_run_simulation(input):
     directory = input
-    # try:
-        # read port paths from json file
-    # with open(os.path.join(directory, "port_paths.json"), "r") as f:
-    #     port_paths = json.load(f)
-    # run vcd2json
 
     dump_file = os.path.join(directory, "dump.vcd")
     timer_file = os.path.join(directory, "timer.json")
     diag_file = os.path.join(directory, "timingdiagram.png")
     
-    # print(["python3", "-m", "vcd2wavedrom.vcd2wavedrom", "-i", dump_file, "-o", timer_file])
     try:
         subprocess.run(["python3", "-m", "vcd2wavedrom.vcd2wavedrom", "-i", dump_file, "-o", timer_file], shell=True, check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        data = {}
+        has_large_data_fields = False
+        # open timer.json
+        with open(timer_file, 'r') as f:
+            data = json.load(f)
+            # loop through signals in data["signal"]
+            for signal in data["signal"]:
+                # remove 'testbench.inst' from signal["name"]
+                signal["name"] = signal["name"].replace('testbench.inst.', '')
+                # if any signal['data'] is longer than 4, set has_large_data_fields to True
+                if any(len(d) > 4 for d in signal["data"]):
+                    has_large_data_fields = True
+                    break
+        # if has_large_data_fields is True, change data["config"]["hscale"] to 3
+        if has_large_data_fields:
+            try:
+                data["config"]["hscale"] = 3
+            except:
+                try:
+                    data["config"] = {"hscale": 3}
+                except:
+                    pass
+            
+        # write the new data to timer.json
+        with open(timer_file, 'w') as f:
+            json.dump(data, f, indent=4)
     except:
         return 0
     # return 0
     try:
-        subprocess.run(["wavedrom-cli", "-i", timer_file, "-p", diag_file], shell=True, check=True)
+        subprocess.run(["wavedrom-cli", "-i", timer_file, "-p", diag_file], shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, check=True)
     except:
         return 0
     return 1
@@ -79,8 +99,4 @@ def create_waveforms():
 
 
 if __name__ == "__main__":
-    # create output directory if it doesn't exist
-    # print(pyautogui.position())
-    # create_dataset()
-    # create_testbenches()
     create_waveforms()
