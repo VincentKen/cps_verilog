@@ -4,6 +4,7 @@ import subprocess
 import json
 from multiprocessing import Pool
 import hdlparse.verilog_parser as vlog
+import concurrent.futures
 
 DATASET_DIR = "dataset"
 
@@ -46,10 +47,9 @@ def try_gentbvlog(inputfile, top, outputfile, clks, rsts):
         return False
     return True
 
-
 def try_testbench_generator(inputfile):
     try:
-        subprocess.run(["python3", "testbench_generator.py", "-f", inputfile], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["python3", "testbench-generator", "-f", inputfile], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         # check if testbench file was created
         if not os.path.exists(os.path.join(os.path.dirname(inputfile), "{}_tb.v".format(os.path.splitext(os.path.basename(inputfile))[0]))):
             # write error to error.txt
@@ -89,10 +89,6 @@ def create_testbench(arg):
     # if the file is a verilog file
     if filename.endswith(".v"):
         try:
-            # try:
-            #     # subprocess.run(["verilog-format.exe", "-f", os.path.join(directory, filename)])
-            # except:
-            #     pass
             try:
                 vlog_mods = vlog_ex.extract_objects(os.path.join(directory, filename))
             except Exception as e:
@@ -128,8 +124,8 @@ def create_testbench(arg):
             port_names = input_port_names + output_port_names
 
             succ = try_gentbvlog(os.path.join(directory, filename), mod_name, os.path.join(directory, "{}_tb.v".format(os.path.splitext(filename)[0])), clock_names, reset_names)
-            # if not succ:
-            #     succ = try_tbgen(os.path.join(directory, filename))
+            if not succ:
+                succ = try_tbgen(os.path.join(directory, filename))
             if not succ:
                 succ = try_testbench_generator(os.path.join(directory, filename))
             if not succ:
@@ -138,49 +134,36 @@ def create_testbench(arg):
         except:
             with open(os.path.join(directory, "error.txt"), "w") as f:
                 f.write("Error reading verilog file")
-            return 0    
-        try:
-            port_paths = {'paths': []}
-            for p in port_names:
-                port_paths['paths'].append("testbench/inst/{}".format(p))
-            # write port paths to json file
-            with open(os.path.join(directory, "port_paths.json"), "w") as f:
-                json.dump(port_paths, f)
-        except:
-            with open(os.path.join(directory, "error.txt"), "w") as f:
-                f.write("Error creating testbench file")
             return 0
     return 1
 
 def create_testbenches():
     global completed
     global success
-    process_pool = Pool(processes=os.cpu_count()-6)
-    # can_start = False
+    process_pool = Pool(processes=os.cpu_count()-2)
     tasks = [] # list of tuples containing (directory, filename)
     total_tasks = 0
-    total_folders = len(os.listdir(DATASET_DIR))
-
+    total_folders = 0
     # loop through folders in DATASET
     for folder in os.listdir(DATASET_DIR):
-        # skip if folder contnains a file ending with tb.v or error.txt
-        # if any(filename.endswith("tb.v") or filename.endswith("error.txt") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
-        #     continue
-        if any(filename.endswith("tb.v") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
-            continue
+        total_folders += 1
         # skip if folder contains a file ending with tb.sv, this means testbench has already been generated for this file
-        # if any(filename.endswith("tb.v") or filename.endswith("error.txt") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
-        #     continue
+        if any(filename.endswith("tb.v") or filename.endswith("error.txt") for filename in os.listdir(os.path.join(DATASET_DIR, folder))):
+            continue
         # read the verilog file in the folder
         for filename in os.listdir(os.path.join(DATASET_DIR, folder)):
             # if the file is a verilog file
             if filename.endswith(".v"):
+                # futures.append(executor.submit(create_testbench, (os.path.join(DATASET_DIR, folder), filename)))
                 tasks.append((os.path.join(DATASET_DIR, folder), filename))
+                
 
     total_tasks = len(tasks)
     print("Going through {} of {} folders".format(total_tasks, total_folders))
     for task in tasks:
         process_pool.apply_async(create_testbench, args=(task,), callback=callback)
+    
+    print("Number of successfully generated testbenches: {}".format(success))
 
     while total_tasks > completed:
         print("Tasks {} completed out of {}".format(completed, total_tasks))
