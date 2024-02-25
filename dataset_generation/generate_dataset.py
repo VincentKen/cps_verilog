@@ -8,7 +8,7 @@ from multiprocessing import Pool
 import hdlparse.verilog_parser as vlog
 import concurrent.futures
 
-DATASET_DIR = "dataset"
+DATASET_DIR = "../dataset"
 
 main_working_dir = os.getcwd()
 

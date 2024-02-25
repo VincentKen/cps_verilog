@@ -18,6 +18,6 @@ def gather_folders_with_png_files(dataset_folder, zip_file_path):
             zip_file.write(file)
 
 # Usage example:
-dataset_folder = 'datasets'
+dataset_folder = '../dataset'
 zip_file_path = 'dataset.zip'
 gather_folders_with_png_files(dataset_folder, zip_file_path)

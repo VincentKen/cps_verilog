@@ -3,7 +3,7 @@ import os
 import subprocess
 from multiprocessing import Pool
 
-DATASET_DIR = "dataset"
+DATASET_DIR = "../dataset"
 
 completed = 0
 success = 0

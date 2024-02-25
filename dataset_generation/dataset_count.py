@@ -1,6 +1,6 @@
 import os
 
-dataset_folder = 'dataset'
+dataset_folder = '../dataset'
 
 png_count = 0
 tb_count = 0
@@ -12,7 +12,7 @@ for folder_name in os.listdir(dataset_folder):
     folder_path = os.path.join(dataset_folder, folder_name)
     if os.path.isdir(folder_path):
         for file_name in os.listdir(folder_path):
-            if file_name.endswith('timingdiagram.png'):
+            if file_name.endswith('.png'):
                 png_count += 1
             if file_name.endswith('tb.v'):
                 tb_count += 1
